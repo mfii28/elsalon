@@ -1,16 +1,32 @@
-
 import { motion } from "framer-motion";
 import { Calendar, Clock, Scissors, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BookingForm from "@/components/BookingForm";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-salon-cream">
+      <nav className="p-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Link to="/" className="text-2xl font-playfair font-bold">
+            Salon
+          </Link>
+          <div className="space-x-4">
+            <Link to="/signin">
+              <Button variant="outline">Sign In</Button>
+            </Link>
+            <Link to="/signup">
+              <Button className="bg-salon-gold hover:bg-salon-gold/90">Sign Up</Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="section-padding relative overflow-hidden">
         <motion.div
