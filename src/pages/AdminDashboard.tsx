@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, Scissors, Timer, TrendingUp, Wallet } from "lucide-react";
+import { Calendar, Users, Scissors, Timer, TrendingUp, Wallet, ChevronRight } from "lucide-react";
 import { formatGhanaCedi } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { addDays, format, isSameDay } from "date-fns";
@@ -205,125 +205,193 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-salon-cream p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="heading-lg">Admin Dashboard</h1>
-          <div className="space-x-4">
-            <Button variant="outline">
-              <Calendar className="w-4 h-4 mr-2" />
-              View Calendar
-            </Button>
+    <div className="min-h-screen bg-gradient-to-b from-salon-cream to-white">
+      {/* Sidebar */}
+      <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg p-6">
+        <div className="mb-8">
+          <h1 className="font-playfair text-2xl font-bold text-salon-dark">Salon Admin</h1>
+          <p className="text-sm text-salon-dark/60">Managing your salon made easy</p>
+        </div>
+        
+        <nav className="space-y-2">
+          <Button variant="ghost" className="w-full justify-start">
+            <Calendar className="w-4 h-4 mr-3" />
+            Dashboard
+          </Button>
+          <Button variant="ghost" className="w-full justify-start">
+            <Users className="w-4 h-4 mr-3" />
+            Stylists
+          </Button>
+          <Button variant="ghost" className="w-full justify-start">
+            <Scissors className="w-4 h-4 mr-3" />
+            Services
+          </Button>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="ml-64 p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="heading-lg text-salon-dark">Welcome Back</h1>
+              <p className="text-salon-dark/60">Here's what's happening in your salon today</p>
+            </div>
             <Button className="bg-salon-gold hover:bg-salon-gold/90">
               <Scissors className="w-4 h-4 mr-2" />
-              Add Service
+              Add New Booking
             </Button>
           </div>
-        </div>
 
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <div key={index} className="glass-card p-6 rounded-2xl">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-salon-gold/10 rounded-full">{stat.icon}</div>
-                <div>
-                  <p className="text-sm text-salon-dark/70">{stat.title}</p>
-                  <p className="text-2xl font-semibold">{stat.value}</p>
+          {/* Stats Grid */}
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
+            {stats.map((stat, index) => (
+              <div 
+                key={index} 
+                className="glass-card p-6 rounded-2xl hover:shadow-lg transition-shadow duration-200"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-salon-gold/10 rounded-full">
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <p className="text-sm text-salon-dark/70">{stat.title}</p>
+                    <p className="text-2xl font-semibold text-salon-dark">{stat.value}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Appointments Section */}
+            <div className="md:col-span-2 space-y-6">
+              <div className="glass-card p-6 rounded-2xl">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 className="heading-md text-salon-dark">Today's Schedule</h2>
+                    <p className="text-sm text-salon-dark/60">
+                      {format(new Date(), 'MMMM d, yyyy')}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    View All
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-left border-b border-salon-dark/10">
+                        <th className="pb-4 font-medium text-salon-dark/70">Client</th>
+                        <th className="pb-4 font-medium text-salon-dark/70">Service</th>
+                        <th className="pb-4 font-medium text-salon-dark/70">Time</th>
+                        <th className="pb-4 font-medium text-salon-dark/70">Stylist</th>
+                        <th className="pb-4 font-medium text-salon-dark/70">Price</th>
+                        <th className="pb-4 font-medium text-salon-dark/70">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments
+                        .filter(apt => isSameDay(new Date(apt.date), new Date()))
+                        .map((apt) => (
+                        <tr 
+                          key={apt.id} 
+                          className="border-b border-salon-dark/5 hover:bg-salon-cream/30 transition-colors"
+                        >
+                          <td className="py-4 font-medium">{apt.client}</td>
+                          <td className="py-4">{apt.service}</td>
+                          <td className="py-4">{apt.time}</td>
+                          <td className="py-4">{apt.stylist}</td>
+                          <td className="py-4">{formatGhanaCedi(apt.price)}</td>
+                          <td className="py-4">
+                            <span
+                              className={`px-3 py-1 text-sm rounded-full ${
+                                apt.status === "Confirmed"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                            >
+                              {apt.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="glass-card p-6 rounded-2xl">
+                <h3 className="text-lg font-semibold mb-4 text-salon-dark">Quick Actions</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <Button variant="outline" className="h-auto py-4 flex-col items-center">
+                    <Calendar className="w-5 h-5 mb-2" />
+                    <span>Schedule Appointment</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col items-center">
+                    <Users className="w-5 h-5 mb-2" />
+                    <span>Manage Stylists</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto py-4 flex-col items-center">
+                    <TrendingUp className="w-5 h-5 mb-2" />
+                    <span>View Reports</span>
+                  </Button>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
-          <div className="glass-card p-6 rounded-2xl md:col-span-2">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="heading-md">Today's Appointments</h2>
-              <Button variant="outline" size="sm">
-                <Calendar className="w-4 h-4 mr-2" />
-                View Full Schedule
-              </Button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left border-b border-salon-dark/10">
-                    <th className="pb-4 font-medium">Client</th>
-                    <th className="pb-4 font-medium">Service</th>
-                    <th className="pb-4 font-medium">Time</th>
-                    <th className="pb-4 font-medium">Stylist</th>
-                    <th className="pb-4 font-medium">Price</th>
-                    <th className="pb-4 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.filter(apt => 
-                    isSameDay(new Date(apt.date), new Date())
-                  ).map((apt) => (
-                    <tr key={apt.id} className="border-b border-salon-dark/5">
-                      <td className="py-4">{apt.client}</td>
-                      <td className="py-4">{apt.service}</td>
-                      <td className="py-4">{apt.time}</td>
-                      <td className="py-4">{apt.stylist}</td>
-                      <td className="py-4">{formatGhanaCedi(apt.price)}</td>
-                      <td className="py-4">
-                        <span
-                          className={`px-3 py-1 text-sm rounded-full ${
-                            apt.status === "Confirmed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {apt.status}
+            {/* Stylist Availability Section */}
+            <div className="glass-card p-6 rounded-2xl">
+              <h2 className="heading-md mb-6 text-salon-dark">Today's Availability</h2>
+              <div className="space-y-6">
+                {stylists.map((stylist) => (
+                  <div key={stylist.id} className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-semibold text-salon-dark">{stylist.name}</h3>
+                        <span className="text-sm text-salon-dark/60">{stylist.specialty}</span>
+                      </div>
+                      <div className="text-sm text-salon-dark/60">
+                        <span className="font-medium">
+                          {stylist.schedule[0].slots.filter(s => s.isBooked).length}
                         </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="glass-card p-6 rounded-2xl">
-            <h2 className="heading-md mb-6">Stylist Availability</h2>
-            <div className="space-y-6">
-              {stylists.map((stylist) => (
-                <div key={stylist.id} className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">{stylist.name}</h3>
-                    <span className="text-sm text-salon-dark/70">
-                      {stylist.specialty}
-                    </span>
-                  </div>
-                  {stylist.schedule
-                    .filter(day => isSameDay(new Date(day.date), new Date()))
-                    .map((day) => (
-                    <div key={day.date} className="bg-white/50 p-3 rounded-lg">
-                      <p className="text-sm font-medium mb-2">{day.date}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {day.slots.map((slot, idx) => (
-                          <div
-                            key={idx}
-                            className={`p-2 rounded text-sm ${
-                              slot.isBooked 
-                                ? "bg-salon-gold/10 text-salon-gold"
-                                : "bg-green-100 text-green-700"
-                            }`}
-                          >
-                            <Timer className="w-4 h-4 inline-block mr-2" />
-                            {slot.time}
-                            {slot.isBooked && slot.clientName && (
-                              <p className="text-xs mt-1 text-salon-dark/70">
-                                {slot.clientName}
-                              </p>
-                            )}
-                          </div>
-                        ))}
+                        /{stylist.dailyBookingLimit} slots booked
                       </div>
                     </div>
-                  ))}
-                </div>
-              ))}
+                    {stylist.schedule
+                      .filter(day => isSameDay(new Date(day.date), new Date()))
+                      .map((day) => (
+                      <div key={day.date} className="bg-white/80 p-4 rounded-lg shadow-sm">
+                        <div className="grid grid-cols-2 gap-2">
+                          {day.slots.map((slot, idx) => (
+                            <div
+                              key={idx}
+                              className={`p-3 rounded-lg text-sm ${
+                                slot.isBooked 
+                                  ? "bg-salon-gold/10 text-salon-gold"
+                                  : "bg-green-100 text-green-700"
+                              }`}
+                            >
+                              <Timer className="w-4 h-4 inline-block mr-2" />
+                              {slot.time}
+                              {slot.isBooked && slot.clientName && (
+                                <p className="text-xs mt-1 text-salon-dark/70">
+                                  {slot.clientName}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
