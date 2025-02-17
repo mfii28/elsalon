@@ -1,10 +1,69 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Scissors, Timer, TrendingUp, Wallet } from "lucide-react";
 import { formatGhanaCedi } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
+
+// Mock data structure for stylist availability
+interface StylistAvailability {
+  id: string;
+  name: string;
+  specialty: string;
+  schedule: {
+    date: string;
+    slots: {
+      time: string;
+      isBooked: boolean;
+    }[];
+  }[];
+}
 
 const AdminDashboard = () => {
+  const { toast } = useToast();
+  const [stylists] = useState<StylistAvailability[]>([
+    {
+      id: "1",
+      name: "Sarah Johnson",
+      specialty: "Color Specialist",
+      schedule: [
+        {
+          date: "2024-03-15",
+          slots: [
+            { time: "09:00 AM", isBooked: true },
+            { time: "10:00 AM", isBooked: false },
+            { time: "11:00 AM", isBooked: true },
+            { time: "12:00 PM", isBooked: false },
+          ]
+        },
+        {
+          date: "2024-03-16",
+          slots: [
+            { time: "09:00 AM", isBooked: false },
+            { time: "10:00 AM", isBooked: false },
+            { time: "11:00 AM", isBooked: false },
+            { time: "12:00 PM", isBooked: false },
+          ]
+        }
+      ]
+    },
+    {
+      id: "2",
+      name: "Michael Brown",
+      specialty: "Cutting Expert",
+      schedule: [
+        {
+          date: "2024-03-15",
+          slots: [
+            { time: "09:00 AM", isBooked: false },
+            { time: "10:00 AM", isBooked: true },
+            { time: "11:00 AM", isBooked: false },
+            { time: "12:00 PM", isBooked: true },
+          ]
+        }
+      ]
+    }
+  ]);
+
   const [appointments] = useState([
     {
       id: 1,
@@ -13,7 +72,8 @@ const AdminDashboard = () => {
       date: "2024-03-15",
       time: "10:00 AM",
       status: "Confirmed",
-      price: 150
+      price: 150,
+      stylist: "Sarah Johnson"
     },
     {
       id: 2,
@@ -22,7 +82,8 @@ const AdminDashboard = () => {
       date: "2024-03-15",
       time: "2:00 PM",
       status: "Pending",
-      price: 300
+      price: 300,
+      stylist: "Michael Brown"
     },
   ]);
 
@@ -54,6 +115,14 @@ const AdminDashboard = () => {
     { name: "Color & Highlights", count: 28, revenue: 8400 },
     { name: "Treatment & Care", count: 32, revenue: 4800 },
   ];
+
+  const handleUpdateAvailability = (stylistId: string, date: string, time: string) => {
+    // In a real app, this would update the backend
+    toast({
+      title: "Availability Updated",
+      description: "The stylist's schedule has been updated successfully.",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-salon-cream p-6">
@@ -88,7 +157,13 @@ const AdminDashboard = () => {
 
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div className="glass-card p-6 rounded-2xl md:col-span-2">
-            <h2 className="heading-md mb-6">Today's Appointments</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="heading-md">Today's Appointments</h2>
+              <Button variant="outline" size="sm">
+                <Calendar className="w-4 h-4 mr-2" />
+                View Full Schedule
+              </Button>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -96,6 +171,7 @@ const AdminDashboard = () => {
                     <th className="pb-4 font-medium">Client</th>
                     <th className="pb-4 font-medium">Service</th>
                     <th className="pb-4 font-medium">Time</th>
+                    <th className="pb-4 font-medium">Stylist</th>
                     <th className="pb-4 font-medium">Price</th>
                     <th className="pb-4 font-medium">Status</th>
                     <th className="pb-4 font-medium">Actions</th>
@@ -107,6 +183,7 @@ const AdminDashboard = () => {
                       <td className="py-4">{apt.client}</td>
                       <td className="py-4">{apt.service}</td>
                       <td className="py-4">{apt.time}</td>
+                      <td className="py-4">{apt.stylist}</td>
                       <td className="py-4">{formatGhanaCedi(apt.price)}</td>
                       <td className="py-4">
                         <span
@@ -135,24 +212,57 @@ const AdminDashboard = () => {
           </div>
 
           <div className="glass-card p-6 rounded-2xl">
-            <h2 className="heading-md mb-6">Popular Services</h2>
-            <div className="space-y-4">
-              {recentServices.map((service, index) => (
-                <div key={index} className="p-4 bg-white/50 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold">{service.name}</h3>
-                      <p className="text-sm text-salon-dark/70">
-                        {service.count} bookings
-                      </p>
-                    </div>
-                    <p className="text-salon-gold font-medium">
-                      {formatGhanaCedi(service.revenue)}
-                    </p>
+            <h2 className="heading-md mb-6">Stylist Availability</h2>
+            <div className="space-y-6">
+              {stylists.map((stylist) => (
+                <div key={stylist.id} className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">{stylist.name}</h3>
+                    <span className="text-sm text-salon-dark/70">{stylist.specialty}</span>
                   </div>
+                  {stylist.schedule.map((day) => (
+                    <div key={day.date} className="bg-white/50 p-3 rounded-lg">
+                      <p className="text-sm font-medium mb-2">{day.date}</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {day.slots.map((slot, idx) => (
+                          <Button
+                            key={idx}
+                            variant={slot.isBooked ? "secondary" : "outline"}
+                            size="sm"
+                            className={slot.isBooked ? "opacity-50 cursor-not-allowed" : ""}
+                            onClick={() => handleUpdateAvailability(stylist.id, day.date, slot.time)}
+                          >
+                            <Timer className="w-4 h-4 mr-2" />
+                            {slot.time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        <div className="glass-card p-6 rounded-2xl">
+          <h2 className="heading-md mb-6">Popular Services</h2>
+          <div className="space-y-4">
+            {recentServices.map((service, index) => (
+              <div key={index} className="p-4 bg-white/50 rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{service.name}</h3>
+                    <p className="text-sm text-salon-dark/70">
+                      {service.count} bookings
+                    </p>
+                  </div>
+                  <p className="text-salon-gold font-medium">
+                    {formatGhanaCedi(service.revenue)}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

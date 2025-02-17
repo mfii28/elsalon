@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -63,6 +62,21 @@ const extras = [
   { id: "hair-mask", name: "Hair Mask", price: 35 },
 ];
 
+interface Availability {
+  date: string;
+  slots: {
+    time: string;
+    isBooked: boolean;
+  }[];
+}
+
+interface Stylist {
+  id: string;
+  name: string;
+  specialty: string;
+  schedule: Availability[];
+}
+
 const BookingForm = ({ onComplete }: BookingFormProps) => {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date>();
@@ -71,6 +85,36 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
   const [stylist, setStylist] = useState("");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const { toast } = useToast();
+
+  const [selectedTime, setSelectedTime] = useState("");
+  const [availableStylists] = useState<Stylist[]>([
+    {
+      id: "sarah",
+      name: "Sarah Johnson",
+      specialty: "Color Specialist",
+      schedule: [
+        {
+          date: "2024-03-15",
+          slots: [
+            { time: "09:00 AM", isBooked: false },
+            { time: "10:00 AM", isBooked: true },
+            { time: "11:00 AM", isBooked: false },
+            { time: "12:00 PM", isBooked: false },
+          ]
+        },
+        {
+          date: "2024-03-16",
+          slots: [
+            { time: "09:00 AM", isBooked: false },
+            { time: "10:00 AM", isBooked: false },
+            { time: "11:00 AM", isBooked: false },
+            { time: "12:00 PM", isBooked: false },
+          ]
+        }
+      ]
+    },
+    // ... add more stylists
+  ]);
 
   const selectedService = service ? services[service as keyof typeof services] : null;
   const selectedSubservice = selectedService?.subservices.find(s => s.id === subservice);
@@ -86,6 +130,24 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
       description: "We'll send you a confirmation email shortly.",
     });
     onComplete();
+  };
+
+  // Filter available stylists based on service selection and date
+  const getAvailableStylists = (selectedDate: Date) => {
+    const dateStr = selectedDate.toISOString().split('T')[0];
+    return availableStylists.filter(stylist => 
+      stylist.schedule.some(day => 
+        day.date === dateStr && day.slots.some(slot => !slot.isBooked)
+      )
+    );
+  };
+
+  // Get available time slots for selected stylist and date
+  const getAvailableSlots = (stylistId: string, selectedDate: Date) => {
+    const dateStr = selectedDate.toISOString().split('T')[0];
+    const stylist = availableStylists.find(s => s.id === stylistId);
+    const daySchedule = stylist?.schedule.find(day => day.date === dateStr);
+    return daySchedule?.slots.filter(slot => !slot.isBooked) || [];
   };
 
   return (
@@ -201,11 +263,39 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
             <Calendar
               mode="single"
               selected={date}
-              onSelect={setDate}
+              onSelect={(newDate) => {
+                setDate(newDate);
+                setSelectedTime("");
+                setStylist("");
+              }}
               className="rounded-md border"
-              disabled={(date) => date < new Date()}
+              disabled={(date) => {
+                // Disable dates with no available stylists
+                return date < new Date() || (
+                  date && getAvailableStylists(date).length === 0
+                );
+              }}
             />
           </div>
+
+          {date && (
+            <div className="space-y-2">
+              <Label>Available Time Slots</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {stylist && getAvailableSlots(stylist, date).map((slot, idx) => (
+                  <Button
+                    key={idx}
+                    variant={selectedTime === slot.time ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedTime(slot.time)}
+                  >
+                    {slot.time}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-4">
             <Button
               variant="outline"
@@ -216,7 +306,8 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
             </Button>
             <Button
               className="flex-1 bg-salon-gold hover:bg-salon-gold/90"
-              onClick={() => date && setStep(3)}
+              onClick={() => (date && selectedTime) && setStep(3)}
+              disabled={!date || !selectedTime}
             >
               Continue
             </Button>
