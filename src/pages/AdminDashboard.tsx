@@ -1,70 +1,69 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Scissors, Timer, TrendingUp, Wallet } from "lucide-react";
 import { formatGhanaCedi } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
+import { addDays, format, isSameDay } from "date-fns";
 
-// Mock data structure for stylist availability
-interface StylistAvailability {
+interface TimeSlot {
+  time: string;
+  isBooked: boolean;
+  clientName?: string;
+  service?: string;
+}
+
+interface StylistSchedule {
+  date: string;
+  slots: TimeSlot[];
+}
+
+interface Stylist {
   id: string;
   name: string;
   specialty: string;
-  schedule: {
-    date: string;
-    slots: {
-      time: string;
-      isBooked: boolean;
-    }[];
-  }[];
+  schedule: StylistSchedule[];
+  dailyBookingLimit: number;
+  workingHours: {
+    start: string;
+    end: string;
+  };
 }
+
+const WORKING_HOURS = {
+  start: "09:00",
+  end: "17:00",
+};
+
+const TIME_SLOTS = [
+  "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
+  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
+  "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
+  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
+];
 
 const AdminDashboard = () => {
   const { toast } = useToast();
-  const [stylists] = useState<StylistAvailability[]>([
+  const [stylists, setStylists] = useState<Stylist[]>([
     {
       id: "1",
       name: "Sarah Johnson",
       specialty: "Color Specialist",
-      schedule: [
-        {
-          date: "2024-03-15",
-          slots: [
-            { time: "09:00 AM", isBooked: true },
-            { time: "10:00 AM", isBooked: false },
-            { time: "11:00 AM", isBooked: true },
-            { time: "12:00 PM", isBooked: false },
-          ]
-        },
-        {
-          date: "2024-03-16",
-          slots: [
-            { time: "09:00 AM", isBooked: false },
-            { time: "10:00 AM", isBooked: false },
-            { time: "11:00 AM", isBooked: false },
-            { time: "12:00 PM", isBooked: false },
-          ]
-        }
-      ]
+      dailyBookingLimit: 14, // 7 clients with 2 slots each
+      workingHours: WORKING_HOURS,
+      schedule: generateInitialSchedule()
     },
     {
       id: "2",
       name: "Michael Brown",
       specialty: "Cutting Expert",
-      schedule: [
-        {
-          date: "2024-03-15",
-          slots: [
-            { time: "09:00 AM", isBooked: false },
-            { time: "10:00 AM", isBooked: true },
-            { time: "11:00 AM", isBooked: false },
-            { time: "12:00 PM", isBooked: true },
-          ]
-        }
-      ]
+      dailyBookingLimit: 14,
+      workingHours: WORKING_HOURS,
+      schedule: generateInitialSchedule()
     }
   ]);
 
-  const [appointments] = useState([
+  const [appointments, setAppointments] = useState([
     {
       id: 1,
       client: "John Doe",
@@ -87,11 +86,106 @@ const AdminDashboard = () => {
     },
   ]);
 
+  function generateInitialSchedule(): StylistSchedule[] {
+    const schedule: StylistSchedule[] = [];
+    const today = new Date();
+    
+    // Generate schedule for next 30 days
+    for (let i = 0; i < 30; i++) {
+      const currentDate = addDays(today, i);
+      schedule.push({
+        date: format(currentDate, 'yyyy-MM-dd'),
+        slots: TIME_SLOTS.map(time => ({
+          time,
+          isBooked: false
+        }))
+      });
+    }
+    
+    return schedule;
+  }
+
+  // Automatically check and update appointment statuses
+  useEffect(() => {
+    const updatedAppointments = appointments.map(apt => {
+      const appointmentDate = new Date(`${apt.date} ${apt.time}`);
+      const now = new Date();
+      
+      // Automatically confirm appointments 24h before
+      if (appointmentDate.getTime() - now.getTime() <= 24 * 60 * 60 * 1000 
+          && apt.status === "Pending") {
+        return { ...apt, status: "Confirmed" };
+      }
+      
+      return apt;
+    });
+
+    setAppointments(updatedAppointments);
+  }, [appointments]);
+
+  // Check stylist availability for a specific date and time
+  const checkStylistAvailability = (
+    stylistId: string,
+    date: string,
+    time: string
+  ): boolean => {
+    const stylist = stylists.find(s => s.id === stylistId);
+    if (!stylist) return false;
+
+    const daySchedule = stylist.schedule.find(s => s.date === date);
+    if (!daySchedule) return false;
+
+    // Check if stylist has reached daily booking limit
+    const dailyBookings = daySchedule.slots.filter(slot => slot.isBooked).length;
+    if (dailyBookings >= stylist.dailyBookingLimit) return false;
+
+    // Check specific time slot availability
+    const timeSlot = daySchedule.slots.find(slot => slot.time === time);
+    return timeSlot ? !timeSlot.isBooked : false;
+  };
+
+  // Automatically update stylist schedule when new booking is made
+  const updateStylistSchedule = (
+    stylistId: string,
+    date: string,
+    time: string,
+    booking: { clientName: string; service: string; }
+  ) => {
+    setStylists(prev => prev.map(stylist => {
+      if (stylist.id !== stylistId) return stylist;
+
+      const updatedSchedule = stylist.schedule.map(day => {
+        if (day.date !== date) return day;
+
+        const updatedSlots = day.slots.map(slot => {
+          if (slot.time !== time) return slot;
+          return {
+            ...slot,
+            isBooked: true,
+            clientName: booking.clientName,
+            service: booking.service
+          };
+        });
+
+        return { ...day, slots: updatedSlots };
+      });
+
+      return { ...stylist, schedule: updatedSchedule };
+    }));
+
+    toast({
+      title: "Schedule Updated",
+      description: "Stylist schedule has been automatically updated.",
+    });
+  };
+
   const stats = [
     {
       icon: <Calendar className="w-6 h-6 text-salon-gold" />,
       title: "Today's Appointments",
-      value: "8",
+      value: appointments.filter(apt => 
+        isSameDay(new Date(apt.date), new Date())
+      ).length.toString(),
     },
     {
       icon: <Users className="w-6 h-6 text-salon-gold" />,
@@ -109,20 +203,6 @@ const AdminDashboard = () => {
       value: formatGhanaCedi(2500),
     },
   ];
-
-  const recentServices = [
-    { name: "Haircut & Styling", count: 45, revenue: 6750 },
-    { name: "Color & Highlights", count: 28, revenue: 8400 },
-    { name: "Treatment & Care", count: 32, revenue: 4800 },
-  ];
-
-  const handleUpdateAvailability = (stylistId: string, date: string, time: string) => {
-    // In a real app, this would update the backend
-    toast({
-      title: "Availability Updated",
-      description: "The stylist's schedule has been updated successfully.",
-    });
-  };
 
   return (
     <div className="min-h-screen bg-salon-cream p-6">
@@ -174,11 +254,12 @@ const AdminDashboard = () => {
                     <th className="pb-4 font-medium">Stylist</th>
                     <th className="pb-4 font-medium">Price</th>
                     <th className="pb-4 font-medium">Status</th>
-                    <th className="pb-4 font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {appointments.map((apt) => (
+                  {appointments.filter(apt => 
+                    isSameDay(new Date(apt.date), new Date())
+                  ).map((apt) => (
                     <tr key={apt.id} className="border-b border-salon-dark/5">
                       <td className="py-4">{apt.client}</td>
                       <td className="py-4">{apt.service}</td>
@@ -196,14 +277,6 @@ const AdminDashboard = () => {
                           {apt.status}
                         </span>
                       </td>
-                      <td className="py-4 space-x-2">
-                        <Button variant="outline" size="sm">
-                          Edit
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                          Cancel
-                        </Button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -218,23 +291,33 @@ const AdminDashboard = () => {
                 <div key={stylist.id} className="space-y-3">
                   <div className="flex justify-between items-center">
                     <h3 className="font-semibold">{stylist.name}</h3>
-                    <span className="text-sm text-salon-dark/70">{stylist.specialty}</span>
+                    <span className="text-sm text-salon-dark/70">
+                      {stylist.specialty}
+                    </span>
                   </div>
-                  {stylist.schedule.map((day) => (
+                  {stylist.schedule
+                    .filter(day => isSameDay(new Date(day.date), new Date()))
+                    .map((day) => (
                     <div key={day.date} className="bg-white/50 p-3 rounded-lg">
                       <p className="text-sm font-medium mb-2">{day.date}</p>
                       <div className="grid grid-cols-2 gap-2">
                         {day.slots.map((slot, idx) => (
-                          <Button
+                          <div
                             key={idx}
-                            variant={slot.isBooked ? "secondary" : "outline"}
-                            size="sm"
-                            className={slot.isBooked ? "opacity-50 cursor-not-allowed" : ""}
-                            onClick={() => handleUpdateAvailability(stylist.id, day.date, slot.time)}
+                            className={`p-2 rounded text-sm ${
+                              slot.isBooked 
+                                ? "bg-salon-gold/10 text-salon-gold"
+                                : "bg-green-100 text-green-700"
+                            }`}
                           >
-                            <Timer className="w-4 h-4 mr-2" />
+                            <Timer className="w-4 h-4 inline-block mr-2" />
                             {slot.time}
-                          </Button>
+                            {slot.isBooked && slot.clientName && (
+                              <p className="text-xs mt-1 text-salon-dark/70">
+                                {slot.clientName}
+                              </p>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -242,27 +325,6 @@ const AdminDashboard = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6 rounded-2xl">
-          <h2 className="heading-md mb-6">Popular Services</h2>
-          <div className="space-y-4">
-            {recentServices.map((service, index) => (
-              <div key={index} className="p-4 bg-white/50 rounded-lg">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">{service.name}</h3>
-                    <p className="text-sm text-salon-dark/70">
-                      {service.count} bookings
-                    </p>
-                  </div>
-                  <p className="text-salon-gold font-medium">
-                    {formatGhanaCedi(service.revenue)}
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
