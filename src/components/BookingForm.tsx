@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatGhanaCedi } from "@/lib/utils";
+import Logo from "@/components/Logo";
 
 interface BookingFormProps {
   onComplete: () => void;
@@ -113,7 +114,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
         }
       ]
     },
-    // ... add more stylists
   ]);
 
   const selectedService = service ? services[service as keyof typeof services] : null;
@@ -132,7 +132,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
     onComplete();
   };
 
-  // Filter available stylists based on service selection and date
   const getAvailableStylists = (selectedDate: Date) => {
     const dateStr = selectedDate.toISOString().split('T')[0];
     return availableStylists.filter(stylist => 
@@ -142,7 +141,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
     );
   };
 
-  // Get available time slots for selected stylist and date
   const getAvailableSlots = (stylistId: string, selectedDate: Date) => {
     const dateStr = selectedDate.toISOString().split('T')[0];
     const stylist = availableStylists.find(s => s.id === stylistId);
@@ -152,6 +150,9 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
 
   return (
     <div className="p-6">
+      <div className="text-center mb-6">
+        <Logo className="text-3xl mx-auto mb-2" />
+      </div>
       <h2 className="heading-lg text-center mb-8">Book Your Appointment</h2>
       
       {step === 1 && (
@@ -270,7 +271,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
               }}
               className="rounded-md border"
               disabled={(date) => {
-                // Disable dates with no available stylists
                 return date < new Date() || (
                   date && getAvailableStylists(date).length === 0
                 );

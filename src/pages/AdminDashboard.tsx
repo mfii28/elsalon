@@ -14,6 +14,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import dataService, { Stylist, Appointment, TimeSlot, StylistSchedule } from "@/lib/dataService";
+import Logo from "@/components/Logo";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
@@ -99,7 +100,7 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg p-6">
         <div className="mb-8">
-          <h1 className="font-playfair text-2xl font-bold text-salon-dark">Salon Admin</h1>
+          <Logo className="text-3xl mb-2" />
           <p className="text-sm text-salon-dark/60">Managing your salon made easy</p>
         </div>
         

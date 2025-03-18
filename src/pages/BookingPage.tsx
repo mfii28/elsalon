@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Check, ChevronRight, Clock } from "lucide-react";
 import dataService, { Service, Stylist } from "@/lib/dataService";
 import { formatGhanaCedi } from "@/lib/utils";
+import Logo from "@/components/Logo";
 
 const BookingPage = () => {
   const { toast } = useToast();
@@ -140,6 +141,7 @@ const BookingPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-salon-cream to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
+          <Logo className="text-4xl mx-auto mb-4" />
           <h1 className="heading-lg text-salon-dark mb-4">Book Your Appointment</h1>
           <p className="text-salon-dark/70 max-w-2xl mx-auto">
             Select your preferred service, stylist, date and time to schedule your next salon visit.

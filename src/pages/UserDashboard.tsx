@@ -5,6 +5,7 @@ import { Calendar, Clock, Download, History, Ticket, User, Wallet } from "lucide
 import { useNavigate } from "react-router-dom";
 import { formatGhanaCedi } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
+import Logo from "@/components/Logo";
 
 const UserDashboard = () => {
   const [appointments] = useState([
@@ -55,7 +56,10 @@ const UserDashboard = () => {
     <div className="min-h-screen bg-salon-cream p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="heading-lg">My Dashboard</h1>
+          <div className="flex items-center gap-3">
+            <Logo className="text-3xl" />
+            <h1 className="heading-lg">My Dashboard</h1>
+          </div>
           <Button
             onClick={() => navigate("/")}
             className="bg-salon-gold hover:bg-salon-gold/90"
