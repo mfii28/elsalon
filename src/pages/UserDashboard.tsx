@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { formatGhanaCedi } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import Logo from "@/components/Logo";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import BookingForm from "@/components/BookingForm";
+import dataService from "@/lib/dataService";
 
 const UserDashboard = () => {
-  const [appointments] = useState([
+  const [appointments, setAppointments] = useState([
     {
       id: 1,
       service: "Haircut & Styling",
@@ -17,7 +20,7 @@ const UserDashboard = () => {
       status: "Upcoming",
       price: 150,
       ticketNo: "APT001",
-      stylist: "Sarah Johnson"
+      stylist: "Kofi Mensah"
     },
     {
       id: 2,
@@ -27,12 +30,13 @@ const UserDashboard = () => {
       status: "Confirmed",
       price: 300,
       ticketNo: "APT002",
-      stylist: "Michael Brown"
+      stylist: "Ama Darko"
     },
   ]);
 
   const [loyaltyPoints] = useState(250);
   const [totalSpent] = useState(2500);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -52,6 +56,17 @@ const UserDashboard = () => {
     });
   };
 
+  const handleBookingComplete = () => {
+    setIsBookingOpen(false);
+    // Refresh appointments after booking
+    const updatedAppointments = dataService.getAppointments();
+    // Update state with newest appointments
+    toast({
+      title: "Booking Successful",
+      description: "Your appointment has been booked successfully.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-salon-cream p-6">
       <div className="max-w-6xl mx-auto">
@@ -61,7 +76,7 @@ const UserDashboard = () => {
             <h1 className="heading-lg">My Dashboard</h1>
           </div>
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => setIsBookingOpen(true)}
             className="bg-salon-gold hover:bg-salon-gold/90"
           >
             Book New Appointment
@@ -174,7 +189,7 @@ const UserDashboard = () => {
                     <div>
                       <h3 className="font-semibold">Haircut & Styling</h3>
                       <p className="text-sm text-salon-dark/70 mt-1">Completed on March 1, 2024</p>
-                      <p className="text-sm text-salon-dark/70">Stylist: Sarah Johnson</p>
+                      <p className="text-sm text-salon-dark/70">Stylist: Kofi Mensah</p>
                     </div>
                     <p className="text-salon-gold font-medium">{formatGhanaCedi(150)}</p>
                   </div>
@@ -184,7 +199,7 @@ const UserDashboard = () => {
                     <div>
                       <h3 className="font-semibold">Treatment & Care</h3>
                       <p className="text-sm text-salon-dark/70 mt-1">Completed on February 15, 2024</p>
-                      <p className="text-sm text-salon-dark/70">Stylist: Michael Brown</p>
+                      <p className="text-sm text-salon-dark/70">Stylist: Ama Darko</p>
                     </div>
                     <p className="text-salon-gold font-medium">{formatGhanaCedi(200)}</p>
                   </div>
@@ -212,6 +227,14 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Booking Dialog */}
+      <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogTitle className="sr-only">Book Appointment</DialogTitle>
+          <BookingForm onComplete={handleBookingComplete} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,10 +1,13 @@
+
 import { motion } from "framer-motion";
 import { Calendar, Clock, Scissors, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BookingForm from "@/components/BookingForm";
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import Logo from "@/components/Logo";
+import { formatGhanaCedi } from "@/lib/utils";
 
 const Index = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -13,8 +16,8 @@ const Index = () => {
     <div className="min-h-screen bg-salon-cream">
       <nav className="p-6">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link to="/" className="text-2xl font-playfair font-bold">
-            Salon
+          <Link to="/" className="flex items-center">
+            <Logo className="text-2xl" />
           </Link>
           <div className="space-x-4">
             <Link to="/signin">
@@ -68,7 +71,7 @@ const Index = () => {
               >
                 <h3 className="heading-md mb-3">{service.title}</h3>
                 <p className="body-text mb-4">{service.description}</p>
-                <p className="text-salon-gold font-semibold">{service.price}</p>
+                <p className="text-salon-gold font-semibold">{service.priceDisplay}</p>
               </motion.div>
             ))}
           </div>
@@ -102,6 +105,7 @@ const Index = () => {
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
         <DialogContent className="sm:max-w-[600px]">
+          <DialogTitle className="sr-only">Book Appointment</DialogTitle>
           <BookingForm onComplete={() => setIsBookingOpen(false)} />
         </DialogContent>
       </Dialog>
@@ -113,17 +117,20 @@ const services = [
   {
     title: "Haircut & Styling",
     description: "Professional cut and style tailored to your preferences",
-    price: "From $50"
+    price: 50,
+    priceDisplay: "From " + formatGhanaCedi(50)
   },
   {
     title: "Color & Highlights",
     description: "Full color or partial highlights with premium products",
-    price: "From $120"
+    price: 120,
+    priceDisplay: "From " + formatGhanaCedi(120)
   },
   {
     title: "Treatment & Care",
     description: "Deep conditioning and specialized hair treatments",
-    price: "From $80"
+    price: 80,
+    priceDisplay: "From " + formatGhanaCedi(80)
   }
 ];
 

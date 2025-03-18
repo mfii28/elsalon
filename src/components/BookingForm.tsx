@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatGhanaCedi } from "@/lib/utils";
 import Logo from "@/components/Logo";
+import dataService from "@/lib/dataService";
 
 interface BookingFormProps {
   onComplete: () => void;
@@ -50,10 +52,10 @@ const services = {
 };
 
 const stylists = [
-  { id: "sarah", name: "Sarah Johnson", specialty: "Color Specialist" },
-  { id: "michael", name: "Michael Brown", specialty: "Cutting Expert" },
-  { id: "emma", name: "Emma Wilson", specialty: "Treatment Specialist" },
-  { id: "john", name: "John Davis", specialty: "Styling Expert" },
+  { id: "sarah", name: "Kofi Mensah", specialty: "Color Specialist" },
+  { id: "michael", name: "Ama Darko", specialty: "Cutting Expert" },
+  { id: "emma", name: "Kwame Owusu", specialty: "Treatment Specialist" },
+  { id: "john", name: "Adwoa Boateng", specialty: "Styling Expert" },
 ];
 
 const extras = [
@@ -88,10 +90,13 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
   const { toast } = useToast();
 
   const [selectedTime, setSelectedTime] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [availableStylists] = useState<Stylist[]>([
     {
       id: "sarah",
-      name: "Sarah Johnson",
+      name: "Kofi Mensah",
       specialty: "Color Specialist",
       schedule: [
         {
@@ -125,11 +130,57 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Booking Confirmed!",
-      description: "We'll send you a confirmation email shortly.",
-    });
-    onComplete();
+    
+    if (!date || !selectedTime || !stylist || !subservice || !clientName) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill out all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Find the selected service and stylist
+    const selectedServiceObj = selectedService?.subservices.find(s => s.id === subservice);
+    const selectedStylistObj = stylists.find(s => s.id === stylist);
+
+    if (!selectedServiceObj || !selectedStylistObj) {
+      toast({
+        title: "Error",
+        description: "Invalid service or stylist selection.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Format the date for the data service
+      const formattedDate = date.toISOString().split('T')[0];
+      
+      // Book the appointment
+      dataService.bookAppointment({
+        client: clientName,
+        service: selectedServiceObj.name,
+        date: formattedDate,
+        time: selectedTime,
+        price: totalPrice,
+        stylistId: stylist,
+        status: "Pending"
+      });
+      
+      toast({
+        title: "Booking Confirmed!",
+        description: "We'll send you a confirmation email shortly.",
+      });
+      
+      onComplete();
+    } catch (error) {
+      toast({
+        title: "Booking Failed",
+        description: "There was an error while booking your appointment. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getAvailableStylists = (selectedDate: Date) => {
@@ -267,7 +318,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
               onSelect={(newDate) => {
                 setDate(newDate);
                 setSelectedTime("");
-                setStylist("");
               }}
               className="rounded-md border"
               disabled={(date) => {
@@ -319,15 +369,32 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
         <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
           <div className="space-y-2">
             <Label>Your Name</Label>
-            <Input required placeholder="Enter your full name" />
+            <Input 
+              required 
+              placeholder="Enter your full name" 
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>Email</Label>
-            <Input required type="email" placeholder="Enter your email" />
+            <Input 
+              required 
+              type="email" 
+              placeholder="Enter your email" 
+              value={clientEmail}
+              onChange={(e) => setClientEmail(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>Phone</Label>
-            <Input required type="tel" placeholder="Enter your phone number" />
+            <Input 
+              required 
+              type="tel" 
+              placeholder="Enter your phone number" 
+              value={clientPhone}
+              onChange={(e) => setClientPhone(e.target.value)}
+            />
           </div>
           <div className="flex gap-4">
             <Button
