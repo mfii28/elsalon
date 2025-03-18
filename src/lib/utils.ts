@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatGhanaCedi(amount: number): string {
   return new Intl.NumberFormat('en-GH', {
     style: 'currency',
-    currency: 'GHS'
-  }).format(amount)
+    currency: 'GHS',
+    currencyDisplay: 'narrowSymbol'
+  }).format(amount).replace('GHS', 'GH₵')
 }
