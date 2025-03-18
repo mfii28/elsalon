@@ -1,0 +1,86 @@
+
+{
+  "stylists": [
+    {
+      "id": "1",
+      "name": "Sarah Johnson",
+      "specialty": "Color Specialist",
+      "dailyBookingLimit": 14,
+      "workingHours": {
+        "start": "09:00",
+        "end": "17:00"
+      },
+      "schedule": []
+    },
+    {
+      "id": "2",
+      "name": "Michael Brown",
+      "specialty": "Cutting Expert",
+      "dailyBookingLimit": 14,
+      "workingHours": {
+        "start": "09:00",
+        "end": "17:00"
+      },
+      "schedule": []
+    },
+    {
+      "id": "3",
+      "name": "Emma Davis",
+      "specialty": "Hair Treatment Specialist",
+      "dailyBookingLimit": 14,
+      "workingHours": {
+        "start": "09:00",
+        "end": "17:00"
+      },
+      "schedule": []
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "client": "John Doe",
+      "service": "Haircut & Styling",
+      "date": "2024-03-15",
+      "time": "10:00 AM",
+      "status": "Confirmed",
+      "price": 150,
+      "stylistId": "1"
+    },
+    {
+      "id": 2,
+      "client": "Jane Smith",
+      "service": "Color & Highlights",
+      "date": "2024-03-15",
+      "time": "2:00 PM",
+      "status": "Pending",
+      "price": 300,
+      "stylistId": "2"
+    }
+  ],
+  "services": [
+    {
+      "id": 1,
+      "name": "Haircut & Styling",
+      "price": 150,
+      "duration": 60
+    },
+    {
+      "id": 2,
+      "name": "Color & Highlights",
+      "price": 300,
+      "duration": 120
+    },
+    {
+      "id": 3,
+      "name": "Hair Treatment",
+      "price": 200,
+      "duration": 90
+    },
+    {
+      "id": 4,
+      "name": "Blowout",
+      "price": 100,
+      "duration": 45
+    }
+  ]
+}
