@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatGhanaCedi } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import dataService from "@/lib/dataService";
+import { addDays } from "date-fns";
 
 interface BookingFormProps {
   onComplete: () => void;
@@ -81,7 +82,7 @@ interface Stylist {
 
 const BookingForm = ({ onComplete }: BookingFormProps) => {
   const [step, setStep] = useState(1);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [service, setService] = useState("");
   const [subservice, setSubservice] = useState("");
   const [stylist, setStylist] = useState("");
@@ -194,6 +195,10 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
     const stylist = availableStylists.find(s => s.id === stylistId);
     const daySchedule = stylist?.schedule.find(day => day.date === dateStr);
     return daySchedule?.slots.filter(slot => !slot.isBooked) || [];
+  };
+
+  const getMaxDate = () => {
+    return addDays(new Date(), 30);
   };
 
   return (
@@ -315,18 +320,14 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
                 mode="single"
                 selected={date}
                 onSelect={(newDate) => {
-                  if (newDate) {
-                    setDate(newDate);
-                    setSelectedTime("");
-                  }
+                  setDate(newDate);
+                  setSelectedTime("");
                 }}
                 className="mx-auto rounded-md pointer-events-auto"
                 disabled={(date) => {
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
-                  return date < today || (
-                    date && getAvailableStylists(date).length === 0
-                  );
+                  return date < today || date > getMaxDate();
                 }}
                 initialFocus
               />

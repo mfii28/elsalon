@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { format, addDays, parseISO } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -37,6 +36,11 @@ const BookingPage = () => {
     setServices(dataService.getServices());
     setStylists(dataService.getStylists());
   }, []);
+
+  // Function to calculate max date (30 days from today)
+  const getMaxDate = () => {
+    return addDays(new Date(), 30);
+  };
 
   // Update available stylists when service changes
   const availableStylists = selectedService
@@ -219,11 +223,9 @@ const BookingPage = () => {
                     disabled={(date) => {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
-                      
-                      const maxDate = addDays(today, 30);
-                      return date < today || date > maxDate;
+                      return date < today || date > getMaxDate();
                     }}
-                    className="mx-auto"
+                    className="mx-auto pointer-events-auto"
                   />
                 </div>
               </div>
