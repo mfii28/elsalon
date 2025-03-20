@@ -10,7 +10,71 @@
         "start": "09:00",
         "end": "17:00"
       },
-      "schedule": []
+      "schedule": [
+        {
+          "date": "2024-07-15",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": true, "clientName": "Akua Manu", "service": "Haircut & Styling" },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": true, "clientName": "Kwame Asare", "service": "Hair Treatment" },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": true, "clientName": "Esi Boateng", "service": "Blowout" },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": true, "clientName": "Yaw Osei", "service": "Color & Highlights" },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-16",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": true, "clientName": "Abena Darkwa", "service": "Haircut & Styling" },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-17",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        }
+      ]
     },
     {
       "id": "2",
@@ -21,7 +85,71 @@
         "start": "09:00",
         "end": "17:00"
       },
-      "schedule": []
+      "schedule": [
+        {
+          "date": "2024-07-15",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": true, "clientName": "Kojo Annan", "service": "Haircut & Styling" },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": true, "clientName": "Kwabena Antwi", "service": "Color & Highlights" },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-16",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-17",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": true, "clientName": "Akosua Mensah", "service": "Haircut & Styling" },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        }
+      ]
     },
     {
       "id": "3",
@@ -32,7 +160,71 @@
         "start": "09:00",
         "end": "17:00"
       },
-      "schedule": []
+      "schedule": [
+        {
+          "date": "2024-07-15",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-16",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": true, "clientName": "Kosi Addo", "service": "Hair Treatment" },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": true, "clientName": "Ama Koranteng", "service": "Hair Treatment" },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        },
+        {
+          "date": "2024-07-17",
+          "slots": [
+            { "time": "09:00 AM", "isBooked": false },
+            { "time": "09:30 AM", "isBooked": false },
+            { "time": "10:00 AM", "isBooked": false },
+            { "time": "10:30 AM", "isBooked": false },
+            { "time": "11:00 AM", "isBooked": false },
+            { "time": "11:30 AM", "isBooked": false },
+            { "time": "12:00 PM", "isBooked": false },
+            { "time": "12:30 PM", "isBooked": false },
+            { "time": "01:00 PM", "isBooked": false },
+            { "time": "01:30 PM", "isBooked": false },
+            { "time": "02:00 PM", "isBooked": false },
+            { "time": "02:30 PM", "isBooked": false },
+            { "time": "03:00 PM", "isBooked": false },
+            { "time": "03:30 PM", "isBooked": false },
+            { "time": "04:00 PM", "isBooked": false },
+            { "time": "04:30 PM", "isBooked": false }
+          ]
+        }
+      ]
     }
   ],
   "appointments": [
@@ -40,7 +232,7 @@
       "id": 1,
       "client": "Akosua Mensah",
       "service": "Haircut & Styling",
-      "date": "2024-03-15",
+      "date": "2024-07-15",
       "time": "10:00 AM",
       "status": "Confirmed",
       "price": 150,
@@ -50,11 +242,51 @@
       "id": 2,
       "client": "Kwabena Antwi",
       "service": "Color & Highlights",
-      "date": "2024-03-15",
+      "date": "2024-07-15",
       "time": "2:00 PM",
       "status": "Pending",
       "price": 300,
       "stylistId": "2"
+    },
+    {
+      "id": 3,
+      "client": "Ama Koranteng",
+      "service": "Hair Treatment",
+      "date": "2024-07-16",
+      "time": "3:00 PM",
+      "status": "Confirmed",
+      "price": 200,
+      "stylistId": "3"
+    },
+    {
+      "id": 4,
+      "client": "Kojo Annan",
+      "service": "Haircut & Styling",
+      "date": "2024-07-15",
+      "time": "10:30 AM",
+      "status": "Confirmed",
+      "price": 150,
+      "stylistId": "2"
+    },
+    {
+      "id": 5,
+      "client": "Abena Darkwa",
+      "service": "Haircut & Styling",
+      "date": "2024-07-16",
+      "time": "12:00 PM",
+      "status": "Pending",
+      "price": 150,
+      "stylistId": "1"
+    },
+    {
+      "id": 6,
+      "client": "Kosi Addo",
+      "service": "Hair Treatment",
+      "date": "2024-07-16",
+      "time": "11:00 AM",
+      "status": "Confirmed",
+      "price": 200,
+      "stylistId": "3"
     }
   ],
   "services": [

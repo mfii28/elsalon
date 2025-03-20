@@ -1,4 +1,3 @@
-
 import { addDays, format, isSameDay, parseISO } from "date-fns";
 import dbData from "../data/db.json";
 
@@ -48,18 +47,8 @@ export interface Service {
 // Init local storage with data if it doesn't exist
 function initializeLocalStorage() {
   if (!localStorage.getItem('salon-data')) {
-    // Generate schedules for stylists before saving
-    const stylists = dbData.stylists.map(stylist => ({
-      ...stylist,
-      schedule: generateInitialSchedule()
-    }));
-
-    const initialData = {
-      ...dbData,
-      stylists
-    };
-
-    localStorage.setItem('salon-data', JSON.stringify(initialData));
+    // Use the pre-configured schedules from db.json
+    localStorage.setItem('salon-data', JSON.stringify(dbData));
   }
 }
 
@@ -79,7 +68,7 @@ function saveData(data: any) {
   localStorage.setItem('salon-data', JSON.stringify(data));
 }
 
-// Generate initial schedule (30 days) for stylists
+// Generate initial schedule (30 days) for stylists if needed
 export function generateInitialSchedule(): StylistSchedule[] {
   const TIME_SLOTS = [
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",

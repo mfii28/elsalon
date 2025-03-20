@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatGhanaCedi } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import dataService from "@/lib/dataService";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 
 interface BookingFormProps {
   onComplete: () => void;
@@ -94,33 +94,12 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
   const [clientEmail, setClientEmail] = useState("");
   const [clientPhone, setClientPhone] = useState("");
 
-  const [availableStylists] = useState<Stylist[]>([
-    {
-      id: "sarah",
-      name: "Kofi Mensah",
-      specialty: "Color Specialist",
-      schedule: [
-        {
-          date: "2024-03-15",
-          slots: [
-            { time: "09:00 AM", isBooked: false },
-            { time: "10:00 AM", isBooked: true },
-            { time: "11:00 AM", isBooked: false },
-            { time: "12:00 PM", isBooked: false },
-          ]
-        },
-        {
-          date: "2024-03-16",
-          slots: [
-            { time: "09:00 AM", isBooked: false },
-            { time: "10:00 AM", isBooked: false },
-            { time: "11:00 AM", isBooked: false },
-            { time: "12:00 PM", isBooked: false },
-          ]
-        }
-      ]
-    },
-  ]);
+  const [availableStylists, setAvailableStylists] = useState<Stylist[]>([]);
+  
+  useState(() => {
+    const stylistsData = dataService.getStylists();
+    setAvailableStylists(stylistsData);
+  });
 
   const selectedService = service ? services[service as keyof typeof services] : null;
   const selectedSubservice = selectedService?.subservices.find(s => s.id === subservice);
@@ -181,19 +160,20 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
     }
   };
 
-  const getAvailableStylists = (selectedDate: Date) => {
-    const dateStr = selectedDate.toISOString().split('T')[0];
-    return availableStylists.filter(stylist => 
-      stylist.schedule.some(day => 
-        day.date === dateStr && day.slots.some(slot => !slot.isBooked)
-      )
-    );
+  const getAvailableStylists = () => {
+    return dataService.getStylists();
   };
 
   const getAvailableSlots = (stylistId: string, selectedDate: Date) => {
-    const dateStr = selectedDate.toISOString().split('T')[0];
-    const stylist = availableStylists.find(s => s.id === stylistId);
-    const daySchedule = stylist?.schedule.find(day => day.date === dateStr);
+    if (!selectedDate) return [];
+    
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const allStylists = dataService.getStylists();
+    const stylist = allStylists.find(s => s.id === stylistId);
+    
+    if (!stylist) return [];
+    
+    const daySchedule = stylist.schedule.find(day => day.date === dateStr);
     return daySchedule?.slots.filter(slot => !slot.isBooked) || [];
   };
 
