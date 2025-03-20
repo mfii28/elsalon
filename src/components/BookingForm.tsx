@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -93,6 +92,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [clientPhone, setClientPhone] = useState("");
+
   const [availableStylists] = useState<Stylist[]>([
     {
       id: "sarah",
@@ -140,7 +140,6 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
       return;
     }
 
-    // Find the selected service and stylist
     const selectedServiceObj = selectedService?.subservices.find(s => s.id === subservice);
     const selectedStylistObj = stylists.find(s => s.id === stylist);
 
@@ -154,10 +153,8 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
     }
 
     try {
-      // Format the date for the data service
       const formattedDate = date.toISOString().split('T')[0];
       
-      // Book the appointment
       dataService.bookAppointment({
         client: clientName,
         service: selectedServiceObj.name,
@@ -200,21 +197,21 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
   };
 
   return (
-    <div className="p-6">
-      <div className="text-center mb-6">
-        <Logo className="text-3xl mx-auto mb-2" />
+    <div className="p-4 md:p-6 overflow-y-auto">
+      <div className="text-center mb-4 md:mb-6">
+        <Logo className="text-2xl md:text-3xl mx-auto mb-2" />
       </div>
-      <h2 className="heading-lg text-center mb-8">Book Your Appointment</h2>
+      <h2 className="text-2xl md:text-3xl font-semibold font-playfair text-center mb-6 md:mb-8">Book Your Appointment</h2>
       
       {step === 1 && (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-4 md:space-y-6 animate-fade-in">
           <div className="space-y-2">
             <Label>Select Service</Label>
             <Select value={service} onValueChange={(value) => {
               setService(value);
               setSubservice("");
             }}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose a service" />
               </SelectTrigger>
               <SelectContent>
@@ -229,7 +226,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
             <div className="space-y-2">
               <Label>Select Specific Service</Label>
               <Select value={subservice} onValueChange={setSubservice}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choose specific service" />
                 </SelectTrigger>
                 <SelectContent>
@@ -247,7 +244,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
             <div className="space-y-2">
               <Label>Select Stylist</Label>
               <Select value={stylist} onValueChange={setStylist}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choose your stylist" />
                 </SelectTrigger>
                 <SelectContent>
@@ -264,7 +261,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
           {stylist && (
             <div className="space-y-2">
               <Label>Add Extra Services</Label>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {extras.map((extra) => (
                   <div key={extra.id} className="flex items-center space-x-2">
                     <Checkbox
@@ -302,6 +299,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
           <Button
             className="w-full bg-salon-gold hover:bg-salon-gold/90"
             onClick={() => stylist && setStep(2)}
+            disabled={!stylist}
           >
             Continue
           </Button>
@@ -309,35 +307,43 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
       )}
 
       {step === 2 && (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-4 md:space-y-6 animate-fade-in">
           <div className="space-y-2">
             <Label>Select Date</Label>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(newDate) => {
-                setDate(newDate);
-                setSelectedTime("");
-              }}
-              className="rounded-md border"
-              disabled={(date) => {
-                return date < new Date() || (
-                  date && getAvailableStylists(date).length === 0
-                );
-              }}
-            />
+            <div className="border rounded-md p-2 md:p-3 mx-auto max-w-md">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(newDate) => {
+                  if (newDate) {
+                    setDate(newDate);
+                    setSelectedTime("");
+                  }
+                }}
+                className="mx-auto rounded-md pointer-events-auto"
+                disabled={(date) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  return date < today || (
+                    date && getAvailableStylists(date).length === 0
+                  );
+                }}
+                initialFocus
+              />
+            </div>
           </div>
 
           {date && (
             <div className="space-y-2">
               <Label>Available Time Slots</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {stylist && getAvailableSlots(stylist, date).map((slot, idx) => (
                   <Button
                     key={idx}
                     variant={selectedTime === slot.time ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedTime(slot.time)}
+                    className={selectedTime === slot.time ? "bg-salon-gold hover:bg-salon-gold/90" : ""}
                   >
                     {slot.time}
                   </Button>
@@ -366,7 +372,7 @@ const BookingForm = ({ onComplete }: BookingFormProps) => {
       )}
 
       {step === 3 && (
-        <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 animate-fade-in">
           <div className="space-y-2">
             <Label>Your Name</Label>
             <Input 
