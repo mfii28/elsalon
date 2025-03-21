@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,6 +10,10 @@ import {
 } from "@/components/ui/select";
 import { formatGhanaCedi } from "@/lib/utils";
 import { StepProps } from "./types";
+import { useEffect, useState } from "react";
+import { getStylists } from "@/lib/stylistService";
+import { getServices } from "@/lib/servicesService";
+import { Service, Stylist } from "@/lib/types";
 
 // Service data - could be moved to a constants file later
 const services = {
@@ -43,13 +46,6 @@ const services = {
   },
 };
 
-const stylists = [
-  { id: "sarah", name: "Kofi Mensah", specialty: "Color Specialist" },
-  { id: "michael", name: "Ama Darko", specialty: "Cutting Expert" },
-  { id: "emma", name: "Kwame Owusu", specialty: "Treatment Specialist" },
-  { id: "john", name: "Adwoa Boateng", specialty: "Styling Expert" },
-];
-
 const extras = [
   { id: "head-massage", name: "Head Massage", price: 30 },
   { id: "hair-spa", name: "Hair Spa", price: 50 },
@@ -59,6 +55,14 @@ const extras = [
 
 export function ServiceSelection({ formState, updateFormState, goToNextStep }: StepProps) {
   const { service, subservice, stylist, selectedExtras } = formState;
+  const [stylists, setStylists] = useState<Stylist[]>([]);
+  const [dbServices, setDbServices] = useState<Service[]>([]);
+  
+  // Load stylists from the database
+  useEffect(() => {
+    setStylists(getStylists());
+    setDbServices(getServices());
+  }, []);
   
   // Get the selected service object
   const selectedService = service ? services[service as keyof typeof services] : null;

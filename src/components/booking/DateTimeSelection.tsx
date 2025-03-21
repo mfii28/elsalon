@@ -4,13 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { addDays, format } from "date-fns";
-import dataService from "@/lib/dataService";
 import { StepProps } from "./types";
-
-interface TimeSlot {
-  time: string;
-  isBooked: boolean;
-}
+import { getAvailableTimeSlots } from "@/lib/stylistService";
+import { TimeSlot } from "@/lib/types";
 
 export function DateTimeSelection({ formState, updateFormState, goToNextStep, goToPrevStep }: StepProps) {
   const { date, selectedTime, stylist } = formState;
@@ -24,24 +20,13 @@ export function DateTimeSelection({ formState, updateFormState, goToNextStep, go
   // Update available times when stylist and date change
   useEffect(() => {
     if (stylist && date) {
-      setAvailableSlots(getAvailableSlots(stylist, date));
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const slots = getAvailableTimeSlots(stylist, formattedDate);
+      setAvailableSlots(slots);
     } else {
       setAvailableSlots([]);
     }
   }, [stylist, date]);
-
-  const getAvailableSlots = (stylistId: string, selectedDate: Date) => {
-    if (!selectedDate) return [];
-    
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    const allStylists = dataService.getStylists();
-    const stylist = allStylists.find(s => s.id === stylistId);
-    
-    if (!stylist) return [];
-    
-    const daySchedule = stylist.schedule.find(day => day.date === dateStr);
-    return daySchedule?.slots.filter(slot => !slot.isBooked) || [];
-  };
 
   return (
     <div className="space-y-4 md:space-y-6 animate-fade-in">
@@ -73,7 +58,7 @@ export function DateTimeSelection({ formState, updateFormState, goToNextStep, go
           <Label>Available Time Slots</Label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {availableSlots.length > 0 ? (
-              availableSlots.map((slot, idx) => (
+              availableSlots.filter(slot => !slot.isBooked).map((slot, idx) => (
                 <Button
                   key={idx}
                   variant={selectedTime === slot.time ? "default" : "outline"}

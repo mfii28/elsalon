@@ -2,6 +2,7 @@
 import { addDays, format, isSameDay, parseISO } from "date-fns";
 import { StylistSchedule, TimeSlot } from "./types";
 import { getData, saveData } from "./storage";
+import { updateStylistAvailability } from "./stylistService";
 
 // Generate initial schedule (30 days) for stylists if needed
 export function generateInitialSchedule(): StylistSchedule[] {
@@ -60,36 +61,5 @@ export function updateStylistSchedule(
   time: string,
   booking: { clientName: string; service: string; }
 ): boolean {
-  const data = getData();
-  
-  let updated = false;
-  
-  data.stylists = data.stylists.map((stylist: any) => {
-    if (stylist.id !== stylistId) return stylist;
-
-    const updatedSchedule = stylist.schedule.map((day: any) => {
-      if (day.date !== date) return day;
-
-      const updatedSlots = day.slots.map((slot: TimeSlot) => {
-        if (slot.time !== time) return slot;
-        updated = true;
-        return {
-          ...slot,
-          isBooked: true,
-          clientName: booking.clientName,
-          service: booking.service
-        };
-      });
-
-      return { ...day, slots: updatedSlots };
-    });
-
-    return { ...stylist, schedule: updatedSchedule };
-  });
-  
-  if (updated) {
-    saveData(data);
-  }
-  
-  return updated;
+  return updateStylistAvailability(stylistId, date, time, true, booking);
 }
